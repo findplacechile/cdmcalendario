@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model comunas {
+  id     Int     @id @default(autoincrement())
+  comuna String?
+}
+
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model dfbdfbdfb {
+// }
+
+model especialidades {
+  id                           Int                            @id @default(autoincrement())
+  especialidad                 String?
+  profesionales_especialidades profesionales_especialidades[]
+}
+
+model intervenciones {
+  id                           Int                            @id @default(autoincrement())
+  intervencion                 String?
+  profesionales_intervenciones profesionales_intervenciones[] @ignore
+}
+
+model medios_de_pago {
+  id            Int     @id @default(autoincrement())
+  medio_de_pago String?
+}
+
+model modalidades {
+  id        Int     @id @default(autoincrement())
+  modalidad String?
+}
+
+model previsiones {
+  id                        Int                         @id @default(autoincrement())
+  prevision                 String?
+  profesionales_previsiones profesionales_previsiones[]
+}
+
+model profesionales {
+  id                           Int                            @id @default(autoincrement())
+  telefono                     String?
+  email                        String?
+  whatsapp                     String?
+  usuario_id                   Int?
+  estudios                     String?
+  usuarios                     usuarios?                      @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "usuariofk")
+  profesionales_especialidades profesionales_especialidades[]
+  profesionales_intervenciones profesionales_intervenciones[] @ignore
+  profesionales_previsiones    profesionales_previsiones[]
+  profesionales_rubros         profesionales_rubros[]
+  registros                    registros[]
+
+  schedules schedules?
+  rest_days rest_days[]
+
+  @@index([usuario_id], map: "fki_usuariofk")
+}
+
+model schedules {
+  id              Int           @id @default(autoincrement())
+  profesional     profesionales @relation(fields: [professional_id], references: [id])
+  professional_id Int           @unique
+  schedule_start  DateTime
+  schedule_end    DateTime
+  rest_start      DateTime
+  rest_end        DateTime
+}
+
+model rest_days {
+  id              Int           @id @default(autoincrement())
+  professional    profesionales @relation(fields: [professional_id], references: [id])
+  professional_id Int
+  day_week        Int
+}
+
+model profesionales_especialidades {
+  id              Int             @id @default(autoincrement())
+  profesional_id  Int?
+  especialidad_id Int?
+  especialidades  especialidades? @relation(fields: [especialidad_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  profesionales   profesionales?  @relation(fields: [profesional_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model profesionales_intervenciones {
+  id              Int             @default(autoincrement())
+  profesional_id  Int?
+  intervencion_id Int?
+  intervenciones  intervenciones? @relation(fields: [intervencion_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "intervencion")
+  profesionales   profesionales?  @relation(fields: [profesional_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "profesional")
+
+  @@index([intervencion_id], map: "fki_intervencion")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model profesionales_medios_de_pago {
+  id               Int  @default(autoincrement())
+  profesional_id   Int
+  medio_de_pago_id Int?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model profesionales_modalidades {
+  id             Int  @default(autoincrement())
+  profesional_id Int?
+  modalidad_id   Int?
+
+  @@ignore
+}
+
+model profesionales_previsiones {
+  id             Int            @id(map: "pk") @default(autoincrement())
+  profesional_id Int?
+  prevision_id   Int?
+  previsiones    previsiones?   @relation(fields: [prevision_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "prevision")
+  profesionales  profesionales? @relation(fields: [profesional_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "profesional")
+
+  @@index([prevision_id], map: "fki_prevision")
+  @@index([profesional_id], map: "fki_profesional")
+}
+
+model profesionales_rubros {
+  id             Int            @id @default(autoincrement())
+  profesional_id Int?
+  rubro_id       Int?
+  profesionales  profesionales? @relation(fields: [profesional_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  rubros         rubros?        @relation(fields: [rubro_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model registros {
+  id             Int            @id @default(autoincrement())
+  profesional_id Int?
+  usuario_id     Int?
+  fecha_y_hora   DateTime?      @db.Timestamp(6)
+  profesionales  profesionales? @relation(fields: [profesional_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  usuarios       usuarios?      @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([usuario_id], map: "fki_registros_usuario_id_fkey")
+}
+
+model rubros {
+  id                   Int                    @id @default(autoincrement())
+  rubro                String?
+  profesionales_rubros profesionales_rubros[]
+}
+
+model servicios {
+  id       Int     @id @default(autoincrement())
+  servicio String?
+  precio   String?
+}
+
+model usuarios {
+  id               Int             @id @default(autoincrement())
+  nombre           String?
+  apellidos        String?
+  fecha_nacimiento DateTime?       @db.Date
+  telefono         String?
+  email            String?
+  whatsapp         String?
+  rut              String?
+  password         String?
+  imagenUrl        String?
+  profesionales    profesionales[]
+  registros        registros[]
+}
