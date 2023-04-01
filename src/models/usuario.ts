@@ -6,6 +6,13 @@ const findUserByRut = async (rut: string) => {
     where: {
       rut, // Utiliza la variable 'rut' en lugar del número 172345549
     },
+    include: {
+      profesionales: {
+        select: {
+          id: true,
+        },
+      },
+    },
   });
 };
 

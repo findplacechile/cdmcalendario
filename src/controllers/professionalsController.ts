@@ -39,78 +39,138 @@ export const getProfessionals = async (req: Request, res: Response) => {
   }
 };
 
+// export const getProfessional = async (req: Request, res: Response) => {
+//   try {
+//     const id = Number(req.params.id);
+//     const result = await db.usuarios.findFirst({
+//       where: { profesionales: { some: { id } } },
+//       include: {
+//         profesionales: {
+//           include: {
+//             profesionales_especialidades: {
+//               select: {
+//                 especialidades: true,
+//               },
+//             },
+//             profesionales_previsiones: {
+//               select: {
+//                 previsiones: true,
+//               },
+//             },
+//             profesionales_rubros: {
+//               select: {
+//                 rubros: true,
+//               },
+//             },
+//             profesionales_intervenciones: {
+//               select: {
+//                 intervenciones: true,
+//               },
+//             },
+//             professionals_payment_methods: {
+//               select: {
+//                 payment_methods: true,
+//               },
+//             },
+//             profesionales_modalidades: {
+//               select: {
+//                 modalidades: true,
+//               },
+//             },
+//           },
+//         },
+//       },
+//     });
+
+//     const { password, profesionales, ...basicInformation } = result;
+
+//     const formatObject = {
+//       ...basicInformation,
+
+//       profesionales_previsiones: profesionales[0].profesionales_previsiones.map(
+//         (item) => item.previsiones
+//       ),
+
+//       profesionales_especialidades:
+//         profesionales[0].profesionales_especialidades.map(
+//           (item) => item.especialidades
+//         ),
+
+//       professionals_payment_methods:
+//         profesionales[0].professionals_payment_methods.map(
+//           (item) => item.payment_methods
+//         ),
+
+//       profesionales_intervenciones:
+//         profesionales[0].profesionales_intervenciones.map(
+//           (item) => item.intervenciones
+//         ),
+
+//       profesionales_modalidades: profesionales[0].profesionales_modalidades.map(
+//         (item) => item.modalidades
+//       ),
+//     };
+
+//     res.send(formatObject);
+//   } catch (error) {
+//     res.json({ message: error.message });
+//   }
+// };
+
 export const getProfessional = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
+
     const result = await db.usuarios.findFirst({
       where: { profesionales: { some: { id } } },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        nombre: true,
+        apellidos: true,
+        telefono: true,
         profesionales: {
-          include: {
-            profesionales_especialidades: {
-              select: {
-                especialidades: true,
-              },
-            },
-            profesionales_previsiones: {
-              select: {
-                previsiones: true,
-              },
-            },
-            profesionales_rubros: {
-              select: {
-                rubros: true,
-              },
-            },
-            profesionales_intervenciones: {
-              select: {
-                intervenciones: true,
-              },
-            },
+          select: {
+            profesionales_especialidades: { include: { especialidades: true } },
+            profesionales_previsiones: { include: { previsiones: true } },
+            profesionales_rubros: { include: { rubros: true } },
+            profesionales_intervenciones: { include: { intervenciones: true } },
             professionals_payment_methods: {
-              select: {
-                payment_methods: true,
-              },
+              include: { payment_methods: true },
             },
-            profesionales_modalidades: {
-              select: {
-                modalidades: true,
-              },
-            },
+            profesionales_modalidades: { include: { modalidades: true } },
           },
         },
       },
     });
 
-    const { password, profesionales, ...basicInformation } = result;
-
+    const professional = result.profesionales[0];
     const formatObject = {
-      ...basicInformation,
-
-      profesionales_previsiones: profesionales[0].profesionales_previsiones.map(
-        (item) => item.previsiones
-      ),
-
+      ...result,
       profesionales_especialidades:
-        profesionales[0].profesionales_especialidades.map(
+        professional.profesionales_especialidades.map(
           (item) => item.especialidades
         ),
-
-      professionals_payment_methods:
-        profesionales[0].professionals_payment_methods.map(
-          (item) => item.payment_methods
-        ),
-
+      profesionales_previsiones: professional.profesionales_previsiones.map(
+        (item) => item.previsiones
+      ),
+      profesionales_rubros: professional.profesionales_rubros.map(
+        (item) => item.rubros
+      ),
       profesionales_intervenciones:
-        profesionales[0].profesionales_intervenciones.map(
+        professional.profesionales_intervenciones.map(
           (item) => item.intervenciones
         ),
-
-      profesionales_modalidades: profesionales[0].profesionales_modalidades.map(
+      professionals_payment_methods:
+        professional.professionals_payment_methods.map(
+          (item) => item.payment_methods
+        ),
+      profesionales_modalidades: professional.profesionales_modalidades.map(
         (item) => item.modalidades
       ),
     };
 
+    delete formatObject.profesionales;
     res.send(formatObject);
   } catch (error) {
     res.json({ message: error.message });

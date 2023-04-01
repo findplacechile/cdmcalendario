@@ -32,23 +32,23 @@ import cors, { CorsOptions } from "cors";
 
 const app = express();
 
-const dominiosPermitidos: string[] = [process.env.FRONTEND_URL as string];
+// const dominiosPermitidos: string[] = [process.env.FRONTEND_URL as string];
 
-const corsOptions: CorsOptions = {
-  origin: function (
-    origin: string | undefined,
-    callback: (err: Error | null, allow?: boolean) => void
-  ) {
-    if (origin && dominiosPermitidos.indexOf(origin) !== -1) {
-      // origen del request está permitido
-      callback(null, true);
-    } else {
-      callback(new Error("No permitido por CORS"));
-    }
-  },
-};
+// const corsOptions: CorsOptions = {
+//   origin: function (
+//     origin: string | undefined,
+//     callback: (err: Error | null, allow?: boolean) => void
+//   ) {
+//     if (origin && dominiosPermitidos.indexOf(origin) !== -1) {
+//       // origen del request está permitido
+//       callback(null, true);
+//     } else {
+//       callback(new Error("No permitido por CORS"));
+//     }
+//   },
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 app.use(express.json());
 

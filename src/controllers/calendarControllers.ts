@@ -93,6 +93,7 @@ export const getCalendar = async (req: Request, res: Response) => {
     schedules,
     specialDate: specialDate.map(({ date, id }) => ({ date, id })),
     availableHours,
+    busyDates: []
   });
 };
 
