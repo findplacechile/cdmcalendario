@@ -131,14 +131,14 @@ export const getProfessional = async (req: Request, res: Response) => {
         telefono: true,
         profesionales: {
           select: {
-            profesionales_especialidades: { include: { especialidades: true } },
-            profesionales_previsiones: { include: { previsiones: true } },
-            profesionales_rubros: { include: { rubros: true } },
-            profesionales_intervenciones: { include: { intervenciones: true } },
-            professionals_payment_methods: {
+            especialidades: { include: { especialidades: true } },
+            previsiones: { include: { previsiones: true } },
+            rubros: { include: { rubros: true } },
+            intervenciones: { include: { intervenciones: true } },
+            payment_methods: {
               include: { payment_methods: true },
             },
-            profesionales_modalidades: { include: { modalidades: true } },
+            modalidades: { include: { modalidades: true } },
           },
         },
       },
@@ -148,24 +148,24 @@ export const getProfessional = async (req: Request, res: Response) => {
     const formatObject = {
       ...result,
       profesionales_especialidades:
-        professional.profesionales_especialidades.map(
+        professional.especialidades.map(
           (item) => item.especialidades
         ),
-      profesionales_previsiones: professional.profesionales_previsiones.map(
+      profesionales_previsiones: professional.previsiones.map(
         (item) => item.previsiones
       ),
-      profesionales_rubros: professional.profesionales_rubros.map(
+      profesionales_rubros: professional.rubros.map(
         (item) => item.rubros
       ),
       profesionales_intervenciones:
-        professional.profesionales_intervenciones.map(
+        professional.intervenciones.map(
           (item) => item.intervenciones
         ),
       professionals_payment_methods:
-        professional.professionals_payment_methods.map(
+        professional.payment_methods.map(
           (item) => item.payment_methods
         ),
-      profesionales_modalidades: professional.profesionales_modalidades.map(
+      profesionales_modalidades: professional.modalidades.map(
         (item) => item.modalidades
       ),
     };
@@ -277,27 +277,27 @@ export const updateProfessional = async (
         telefono,
         estudios,
         email,
-        profesionales_rubros: {
+        rubros: {
           deleteMany: {},
           create: rubros.map((id) => ({ rubro_id: id })),
         },
-        profesionales_especialidades: {
+        especialidades: {
           deleteMany: {},
           create: especialidades.map((id) => ({ especialidad_id: id })),
         },
-        profesionales_intervenciones: {
+        intervenciones: {
           deleteMany: {},
           create: intervenciones.map((id) => ({ intervencion_id: id })),
         },
-        profesionales_modalidades: {
+        modalidades: {
           deleteMany: {},
           create: modalidades.map((id) => ({ modalidad_id: id })),
         },
-        profesionales_previsiones: {
+        previsiones: {
           deleteMany: {},
           create: previsiones.map((id) => ({ prevision_id: id })),
         },
-        professionals_payment_methods: {
+        payment_methods: {
           deleteMany: {},
           create: payment_methods.map((id) => ({ payment_method_id: id })),
         },

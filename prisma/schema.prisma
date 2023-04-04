@@ -9,47 +9,39 @@ datasource db {
 
 model comunas {
   id     Int     @id @default(autoincrement())
-  comuna String?
+  nombre String?
 }
 
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model dfbdfbdfb {
-// }
 
 model especialidades {
   id                           Int                            @id @default(autoincrement())
-  especialidad                 String?
+  nombre                 String?
   profesionales_especialidades profesionales_especialidades[]
 }
 
 model intervenciones {
   id                           Int                            @id @default(autoincrement())
-  intervencion                 String?
+  nombre                 String?
   profesionales_intervenciones profesionales_intervenciones[]
 }
 
 model medios_de_pago {
-  id            Int     @id @default(autoincrement())
-  medio_de_pago String?
-}
-
-model payment_methods {
   id              Int             @id @default(autoincrement())
-  payment_method  String?
-  payment_methods profesionales[]
-
+  nombre  String?
   professionals_payment_methods professionals_payment_methods[]
+
+  @@map("payment_methods")
 }
 
 model modalidades {
   id                        Int                         @id @default(autoincrement())
-  modalidad                 String?
+  nombre                 String?
   profesionales_modalidades profesionales_modalidades[]
 }
 
 model previsiones {
   id                        Int                         @id @default(autoincrement())
-  prevision                 String?
+  nombre              String?
   profesionales_previsiones profesionales_previsiones[]
 }
 
@@ -61,11 +53,10 @@ model profesionales {
   usuario_id                   Int?
   estudios                     String?
   usuarios                     usuarios?                      @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "usuariofk")
-  profesionales_especialidades profesionales_especialidades[]
-  profesionales_intervenciones profesionales_intervenciones[]
-  profesionales_previsiones    profesionales_previsiones[]
-  profesionales_rubros         profesionales_rubros[]
-  payment_methods              payment_methods[]
+  especialidades profesionales_especialidades[]
+  intervenciones profesionales_intervenciones[]
+  previsiones    profesionales_previsiones[]
+  rubros         profesionales_rubros[]
 
   registros registros[]
 
@@ -73,8 +64,8 @@ model profesionales {
   rest_days                     rest_days[]
   records                       records[]
   special_dates                 special_dates[]
-  professionals_payment_methods professionals_payment_methods[]
-  profesionales_modalidades     profesionales_modalidades[]
+  payment_methods professionals_payment_methods[]
+  modalidades     profesionales_modalidades[]
 
   @@index([usuario_id], map: "fki_usuariofk")
 }
@@ -155,7 +146,7 @@ model professionals_payment_methods {
   id                Int              @id @default(autoincrement())
   profesional_id    Int
   payment_method_id Int?
-  payment_methods   payment_methods? @relation(fields: [payment_method_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payment_methods   medios_de_pago? @relation(fields: [payment_method_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   profesionales     profesionales?   @relation(fields: [profesional_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
